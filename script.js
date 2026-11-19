@@ -1,6 +1,8 @@
-const library = [];
+// Book Data
 
-function Book(title, author, pages, isRead) {
+let library = [];
+
+function Book(title, author, pages, isRead, id) {
   if (!new.target) {
     throw Error("You must use the 'new' operator to call the constructor");
   }
@@ -8,11 +10,17 @@ function Book(title, author, pages, isRead) {
   this.author = author;
   this.pages = pages;
   this.isRead = isRead;
-  this.id = crypto.randomUUID();
+  this.id = id;
 }
 
-function addBookToLibrary(title, author, pages, isRead) {
-  library.push(new Book(title, author, pages, isRead));
+function addBookToLibrary(
+  title,
+  author,
+  pages,
+  isRead,
+  id = crypto.randomUUID(),
+) {
+  library.push(new Book(title, author, pages, isRead, id));
 }
 
 addBookToLibrary(
@@ -32,28 +40,37 @@ addBookToLibrary(
   true,
 );
 
-function displayBook(title, author, pages, isRead) {
+// Book Display
+
+function displayBook(title, author, pages, isRead, id) {
   const main = document.querySelector('main');
   const article = document.createElement('article');
   const h2 = document.createElement('h2');
   const h3 = document.createElement('h3');
   const p = document.createElement('p');
+  const btn = document.createElement('button');
 
   h2.textContent = title;
   h3.textContent = author;
   p.textContent = `${pages} pages, ${isRead ? 'read' : 'not read yet'}`;
+  btn.textContent = 'Remove';
 
-  article.append(h2, h3, p);
+  article.dataset.id = id;
+  btn.addEventListener('click', () => removeBook(id));
+
+  article.append(h2, h3, p, btn);
   main.appendChild(article);
 }
 
 function initDisplayLibrary() {
   for (const book of library) {
-    displayBook(book.title, book.author, book.pages, book.isRead);
+    displayBook(book.title, book.author, book.pages, book.isRead, book.id);
   }
 }
 
 initDisplayLibrary();
+
+// Submit Form
 
 const form = document.querySelector('form');
 form.addEventListener('submit', () => {
@@ -70,13 +87,32 @@ form.addEventListener('submit', () => {
       dataArray.push(value);
     }
   }
-  addBookToLibrary(...dataArray);
-  displayBook(...dataArray);
+  const id = crypto.randomUUID();
+  addBookToLibrary(...dataArray, id);
+  displayBook(...dataArray, id);
   form.reset();
 });
+
+// Close Dialog
 
 const dialog = document.querySelector('dialog');
 const cancelBtn = document.getElementById('cancel-btn');
 cancelBtn.addEventListener('click', () => {
   dialog.close();
 });
+
+// Remove Book
+
+function removeBook(id) {
+  removeBookFromLibrary(id);
+  removeBookFromDisplay(id);
+}
+
+function removeBookFromLibrary(id) {
+  library = library.filter((book) => book.id !== id);
+}
+
+function removeBookFromDisplay(id) {
+  const article = document.querySelector(`article[data-id="${id}"]`);
+  article.remove();
+}
