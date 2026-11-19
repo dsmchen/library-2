@@ -13,6 +13,10 @@ function Book(title, author, pages, isRead, id) {
   this.id = id;
 }
 
+Book.prototype.toggleIsRead = function () {
+  this.isRead = !this.isRead;
+};
+
 function addBookToLibrary(
   title,
   author,
@@ -47,18 +51,25 @@ function displayBook(title, author, pages, isRead, id) {
   const article = document.createElement('article');
   const h2 = document.createElement('h2');
   const h3 = document.createElement('h3');
-  const p = document.createElement('p');
-  const btn = document.createElement('button');
+  const pagesP = document.createElement('p');
+  const statusP = document.createElement('p');
+  const removeBookBtn = document.createElement('button');
+  const toggleIsReadBtn = document.createElement('button');
 
   h2.textContent = title;
   h3.textContent = author;
-  p.textContent = `${pages} pages, ${isRead ? 'read' : 'not read yet'}`;
-  btn.textContent = 'Remove';
+  pagesP.textContent = `Pages: ${pages}`;
+  statusP.textContent = `Status: ${isRead ? 'Read' : 'Not read yet'}`;
+  removeBookBtn.textContent = 'Remove Book';
+  toggleIsReadBtn.textContent = 'Toggle Read Status';
 
   article.dataset.id = id;
-  btn.addEventListener('click', () => removeBook(id));
+  pagesP.className = 'pages';
+  statusP.className = 'status';
+  removeBookBtn.addEventListener('click', () => removeBook(id));
+  toggleIsReadBtn.addEventListener('click', () => toggleIsRead(id));
 
-  article.append(h2, h3, p, btn);
+  article.append(h2, h3, pagesP, statusP, toggleIsReadBtn, removeBookBtn);
   main.appendChild(article);
 }
 
@@ -115,4 +126,29 @@ function removeBookFromLibrary(id) {
 function removeBookFromDisplay(id) {
   const article = document.querySelector(`article[data-id="${id}"]`);
   article.remove();
+}
+
+// Toggle Is Read
+
+function toggleIsRead(id) {
+  toggleIsReadProp(id);
+  toggleIsReadDisplay(id);
+}
+
+function toggleIsReadProp(id) {
+  library = library.map((book) => {
+    if (book.id !== id) return book;
+    book.toggleIsRead();
+    return book;
+  });
+}
+
+function toggleIsReadDisplay(id) {
+  const article = document.querySelector(`article[data-id="${id}"]`);
+  const p = article.querySelector('.status');
+  if (p.textContent === 'Status: Read') {
+    p.textContent = 'Status: Not read yet';
+  } else {
+    p.textContent = 'Status: Read';
+  }
 }
