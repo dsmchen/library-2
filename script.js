@@ -32,21 +32,51 @@ addBookToLibrary(
   true,
 );
 
-function displayLibrary() {
+function displayBook(title, author, pages, isRead) {
+  const main = document.querySelector('main');
+  const article = document.createElement('article');
+  const h2 = document.createElement('h2');
+  const h3 = document.createElement('h3');
+  const p = document.createElement('p');
+
+  h2.textContent = title;
+  h3.textContent = author;
+  p.textContent = `${pages} pages, ${isRead ? 'read' : 'not read yet'}`;
+
+  article.append(h2, h3, p);
+  main.appendChild(article);
+}
+
+function initDisplayLibrary() {
   for (const book of library) {
-    const main = document.querySelector('main');
-    const article = document.createElement('article');
-    const h2 = document.createElement('h2');
-    const h3 = document.createElement('h3');
-    const p = document.createElement('p');
-
-    h2.textContent = book.title;
-    h3.textContent = book.author;
-    p.textContent = `${book.pages} pages, ${book.isRead ? 'read' : 'not read yet'}`;
-
-    article.append(h2, h3, p);
-    main.appendChild(article);
+    displayBook(book.title, book.author, book.pages, book.isRead);
   }
 }
 
-displayLibrary();
+initDisplayLibrary();
+
+const form = document.querySelector('form');
+form.addEventListener('submit', () => {
+  const formData = new FormData(form);
+  const dataArray = [];
+  for (const value of formData.values()) {
+    if (value === 'true') {
+      dataArray.push(true);
+    } else if (value === 'false') {
+      dataArray.push(false);
+    } else if (Number.isInteger(Number(value))) {
+      dataArray.push(Number(value));
+    } else {
+      dataArray.push(value);
+    }
+  }
+  addBookToLibrary(...dataArray);
+  displayBook(...dataArray);
+  form.reset();
+});
+
+const dialog = document.querySelector('dialog');
+const cancelBtn = document.getElementById('cancel-btn');
+cancelBtn.addEventListener('click', () => {
+  dialog.close();
+});

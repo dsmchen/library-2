@@ -73,10 +73,12 @@ h6 {
 
 body {
   color: #111;
-  text-align: center;
 }
 
 header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 20px;
 }
 
@@ -91,13 +93,51 @@ main {
 article {
   border: 1px solid #111;
   padding: 10px;
+  text-align: center;
 }
 
 article h2 {
   line-height: 1;
 }
 
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+}
+
+form label {
+  font-weight: bold;
+}
+
+form fieldset {
+  position: relative;
+  margin-top: calc(1rem + 10px);
+  padding: 5px 10px;
+}
+
+form fieldset legend {
+  font-weight: bold;
+  position: absolute;
+  top: calc(-1rem - 10px);
+  left: 0;
+}
+
+form fieldset label {
+  font-weight: normal;
+}
+
+form .buttons {
+  margin-left: auto;
+}
+
 @media screen and (width >= 70em) {
+  header,
   main {
     max-width: 70em;
     margin-left: auto;
